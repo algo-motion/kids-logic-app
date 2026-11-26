@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>ろんりあそび</title>
+  <meta name="theme-color" content="#fff6e5">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧩</text></svg>">
+</head>
+<body>
+  <main id="app">
+    <section id="home" class="screen">
+      <h1 class="logo"><span>🧩</span> ろんりあそび</h1>
+      <p class="subtitle">あそびたい ゲームを えらんでね</p>
+      <div id="game-list" class="game-list"></div>
+    </section>
+
+    <section id="play" class="screen" hidden>
+      <div class="topbar">
+        <button id="btn-home" class="icon-btn" aria-label="ホームに もどる">🏠</button>
+        <div id="progress" class="progress" aria-label="すすみぐあい"></div>
+        <button id="btn-speak" class="icon-btn" aria-label="もういちど きく">🔊</button>
+      </div>
+      <p id="prompt" class="prompt"></p>
+      <div id="board" class="board"></div>
+    </section>
+
+    <section id="reward" class="screen" hidden>
+      <div class="reward-card">
+        <p class="reward-title">よく できました!</p>
+        <div id="reward-stars" class="reward-stars"></div>
+        <div class="reward-actions">
+          <button id="btn-again" class="big-btn again">🔄 もういちど</button>
+          <button id="btn-back" class="big-btn back">🏠 おうち</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="fx" class="fx" aria-hidden="true"></div>
+  <div id="toast" class="toast" hidden></div>
+
+  <script type="module" src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
