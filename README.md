@@ -23,7 +23,7 @@ python -m venv .venv
 # Windows: .venv\Scripts\activate   macOS/Linux: source .venv/bin/activate
 pip install -r requirements.txt pytest
 pytest
-python api/index.py      # http://localhost:5000
+python app.py           # http://localhost:5000
 ```
 
 ## Vercel にデプロイ

@@ -7,7 +7,7 @@
 | 項目 | 選定 | 理由 |
 |---|---|---|
 | 言語 / ランタイム | Python 3.12（Vercel Python Runtime） | 要件 NFR-5。ローカルは 3.12 以上で動作。 |
-| Web フレームワーク | Flask 3 | WSGI アプリを `api/index.py` から公開するだけで Vercel で動く。 |
+| Web フレームワーク | Flask 3 | ルートの `app.py` に `app` を定義すると Vercel が Flask として自動検出する。 |
 | フロントエンド | HTML + CSS + 素の JavaScript（ES Modules） | ビルド不要（憲章 第7条）、軽量（NFR-1）。 |
 | 音声 | Web Speech API `speechSynthesis`（`ja-JP`） | 文字に頼らない指示（憲章 第2条）。追加ライブラリ不要。 |
 | 永続化 | ブラウザの `localStorage` | 端末内のみに保存（憲章 第1条）。 |
@@ -16,13 +16,13 @@
 
 ## 2. 全体構成
 ```
-ブラウザ ──GET /──────────────▶ Flask (api/index.py) ──▶ templates/index.html
-   │      GET /static/*  ─────▶ static/ (CSS, JS)
+ブラウザ ──GET /──────────────▶ Flask (app.py) ──▶ templates/index.html
+   │      GET /static/*  ─────▶ public/static/（Vercel では CDN が配信）
    │      GET /api/puzzles ───▶ logic/puzzles.py（問題生成・純粋関数）
    │
    └─ ゲーム進行・正誤判定・星/レベル保存はすべてクライアント側
 ```
-- Vercel では `vercel.json` の rewrites で全パスを `api/index` に送る。
+- Vercel は Flask アプリを 1 つの Vercel Function としてデプロイする。`vercel.json` は不要。
 - 正誤判定をクライアントで行うことで、ゲーム中に通信が不要になる（NFR-2）。
   子ども向けの練習アプリであり、正解データがクライアントに見えることは問題としない。
 
@@ -31,14 +31,14 @@
 kids-logic-app/
 ├─ .specify/memory/constitution.md
 ├─ specs/001-logic-games/{spec.md, plan.md, tasks.md, contracts/api.md}
-├─ api/index.py            # Flask アプリ（Vercel のエントリポイント）
+├─ app.py                  # Flask アプリ（Vercel のエントリポイント）
 ├─ logic/puzzles.py        # 問題生成ロジック
 ├─ templates/index.html
-├─ static/css/style.css
-├─ static/js/app.js        # 画面遷移・進行・音声・保存
-├─ static/js/games/{pattern,odd_one_out,size_order,compare_count}.js
+├─ public/static/css/style.css
+├─ public/static/js/app.js # 画面遷移・進行・音声・保存
+├─ public/static/js/games/{pattern,odd_one_out,size_order,compare_count}.js
 ├─ tests/{test_puzzles.py, test_api.py}
-├─ requirements.txt / vercel.json / README.md
+├─ requirements.txt / README.md
 ```
 
 ## 4. データモデル（Puzzle）
@@ -93,12 +93,13 @@ kids-logic-app/
   `prefers-reduced-motion` で動きを抑制（NFR-6）。
 
 ## 8. デプロイ
-- `vercel.json`:
-  ```json
-  { "rewrites": [{ "source": "/(.*)", "destination": "/api/index" }] }
-  ```
-- `requirements.txt` に Flask のみ。Vercel が `api/index.py` の `app`（WSGI）を検出して起動する。
-- `templates/` と `static/` は `api/index.py` からの絶対パスで参照する。
+- Vercel の Flask 対応（ゼロコンフィグ）に従う:
+  - エントリポイントはルートの `app.py`（`app = Flask(...)`）。`api/` 配下や `vercel.json` の rewrites は使わない
+    （rewrites を使うと Flask に `/api/index` というパスが渡り 404 になる）。
+  - 静的ファイルは `public/static/` に置く。Vercel では Flask の `static_folder` は使えないため、
+    CDN が `/static/*` として配信する。ローカルでは Flask が同じ URL で配信する。
+- `requirements.txt` に Flask のみ。
+- `templates/` は `app.py` からの絶対パスで参照する。
 
 ## 9. テスト方針
 | 受け入れ基準 | テスト |

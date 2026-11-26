@@ -1,19 +1,19 @@
 """Flask アプリ（Vercel のエントリポイント）。API 契約: specs/001-logic-games/contracts/api.md"""
 
-import sys
 from pathlib import Path
 
 from flask import Flask, jsonify, render_template, request
 
-ROOT = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT))
+from logic.puzzles import GAMES, generate
 
-from logic.puzzles import GAMES, generate  # noqa: E402
+ROOT = Path(__file__).resolve().parent
 
+# Vercel では public/ 以下を CDN が配信する。ローカルでは Flask が同じパスで配信する。
 app = Flask(
     __name__,
     template_folder=str(ROOT / "templates"),
-    static_folder=str(ROOT / "static"),
+    static_folder=str(ROOT / "public" / "static"),
+    static_url_path="/static",
 )
 app.json.ensure_ascii = False
 

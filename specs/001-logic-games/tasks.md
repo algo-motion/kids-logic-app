@@ -5,8 +5,8 @@
 - 各タスクは完了したら `[x]` にする
 
 ## フェーズ 1: セットアップ
-- [x] T001 プロジェクト構成を作成（`requirements.txt`, `vercel.json`, `.gitignore`）
-- [x] T002 Flask の骨組みと `GET /api/health`（`api/index.py`）
+- [x] T001 プロジェクト構成を作成（`requirements.txt`, `.gitignore`）
+- [x] T002 Flask の骨組みと `GET /api/health`（`app.py`）
 
 ## フェーズ 2: 仕様
 - [x] T003 憲章（`.specify/memory/constitution.md`）
@@ -38,3 +38,5 @@
 - [x] T021 レスポンシブ確認（360px〜1366px）、タップ領域 64px 以上
 - [x] T022 README（ローカル実行・デプロイ・手動確認チェックリスト）
 - [ ] T023 Vercel へデプロイし、本番で手動確認チェックリストを実施
+- [x] T024 本番で 404 になる問題の修正: Vercel の Flask ゼロコンフィグ構成へ移行
+      （`api/index.py` → `app.py`、`static/` → `public/static/`、`vercel.json` 削除）
